@@ -4,8 +4,7 @@ Vencord Development Companion Extension that lets you test patches and webpack f
 
 This is still a WIP and not usable rn
 
-(yes the button is in the wrong location)
-![image](https://user-images.githubusercontent.com/45497981/224321252-91212c23-781e-4b77-b11d-b948988f4bb8.png)
+![image](https://user-images.githubusercontent.com/45497981/224365555-60e968a1-d2d0-4aee-b29b-e5714273682c.png)
 
 
 ## TODO
