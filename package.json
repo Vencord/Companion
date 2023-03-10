@@ -1,25 +1,30 @@
 {
   "name": "vencord-companion",
   "displayName": "Vencord Development Helper",
-  "description": "very cool",
   "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.76.0"
-  },
+  "description": "very cool",
   "categories": [
     "Other"
   ],
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vencord/Companion"
+  },
+  "license": "GPL-3.0",
+  "author": "Vendicated <vendicated+npm@riseup.net>",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --minify --log-level=info --outfile=./dist/extension.js",
+    "lint": "eslint src --ext ts",
+    "vscode:prepublish": "pnpm compile && pnpm lint",
+    "package": "vsce package --no-dependencies",
+    "watch": "tsc -watch -p ./"
+  },
   "activationEvents": [
     "onLanguage:typescript",
     "onLanguage:typescriptreact"
   ],
-  "main": "./out/extension.js",
-  "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts"
-  },
   "dependencies": {
     "typescript": "^4.9.5",
     "ws": "^8.12.1"
@@ -30,6 +35,10 @@
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
+    "@vscode/vsce": "^2.18.0",
     "eslint": "^8.34.0"
+  },
+  "engines": {
+    "vscode": "^1.76.0"
   }
 }

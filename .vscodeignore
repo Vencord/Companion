@@ -3,6 +3,7 @@
 src/**
 .gitignore
 .yarnrc
+pnpm-lock.yaml
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
