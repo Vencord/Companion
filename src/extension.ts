@@ -102,7 +102,7 @@ function parsePatch(document: vscode.TextDocument, patch: ts.ObjectLiteralExpres
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.languages.registerCodeLensProvider({ pattern: "**/plugins/{*.ts,*.tsx,**/index.ts,**/index.tsx}" }, {
-		provideCodeLenses(document, token) {
+		provideCodeLenses(document) {
 			const file = ts.createSourceFile(document.fileName, document.getText(), ts.ScriptTarget.Latest);
 			const children = file.getChildAt(0).getChildren();
 
@@ -128,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
 					const data = parsePatch(document, patch);
 					if (!data) continue;
 
-					const range = new vscode.Range(document.positionAt(patch.pos), document.positionAt(patch.end));
+					const range = new vscode.Range(document.positionAt(patch.properties.pos), document.positionAt(patch.properties.end));
 					const lens = new vscode.CodeLens(range, {
 						title: "Test Patch",
 						command: "vencord-companion.testPatch",
