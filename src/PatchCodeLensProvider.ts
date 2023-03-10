@@ -1,5 +1,7 @@
 import { basename } from "path";
-import { CompilerOptions, createPrinter, createSourceFile, EmitHint, Expression, findConfigFile, isArrayLiteralExpression, isArrowFunction, isCallExpression, isExportAssignment, isFunctionExpression, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isRegularExpressionLiteral, isStringLiteral, ObjectLiteralExpression, parseJsonConfigFileContent, readConfigFile, ScriptTarget, sys, transpileModule } from "typescript";
+import {
+    CompilerOptions, createPrinter, createSourceFile, EmitHint, Expression, findConfigFile, isArrayLiteralExpression, isArrowFunction, isCallExpression, isExportAssignment, isFunctionExpression, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isRegularExpressionLiteral, isStringLiteral, ObjectLiteralExpression, parseJsonConfigFileContent, readConfigFile, ScriptTarget, sys, transpileModule
+} from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
 import { hasName, ParseResult, PatchData } from "./helpers";
 
