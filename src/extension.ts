@@ -18,9 +18,7 @@ export function activate(context: ExtensionContext) {
 				await sendToSockets({ type: "testPatch", data: patch });
 				vscWindow.showInformationMessage("Patch OK!");
 			} catch (err) {
-				vscWindow.showErrorMessage("Patch failed: ", {
-					detail: String(err)
-				});
+				vscWindow.showErrorMessage("Patch failed: " + String(err));
 			}
 		}),
 
@@ -29,9 +27,7 @@ export function activate(context: ExtensionContext) {
 				await sendToSockets({ type: "testFind", data: find });
 				vscWindow.showInformationMessage("Find OK!");
 			} catch (err) {
-				vscWindow.showErrorMessage("Find bad: ", {
-					detail: String(err)
-				});
+				vscWindow.showErrorMessage("Find bad: " + String(err));
 			}
 		}),
 	);
