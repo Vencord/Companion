@@ -1,0 +1,16 @@
+{
+    "Define Plugin": {
+        "prefix": [ "defPlugin", "vcPlugin" ],
+        "description": "Defines a Vencord Plugin",
+        "body": [
+            "import { Devs } from \"@utils/constants\";",
+            "import definePlugin from \"@utils/types\";",
+            "",
+            "export default definePlugin({",
+            "    name: \"${1:name}\",",
+            "    description: \"${2:description}\",",
+            "    authors: [Devs.${3:author}],",
+            "});"
+        ]
+    }
+}

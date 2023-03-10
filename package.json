@@ -1,44 +1,63 @@
 {
-  "name": "vencord-companion",
-  "displayName": "Vencord Development Helper",
-  "version": "0.0.1",
-  "description": "very cool",
-  "categories": [
-    "Other"
-  ],
-  "keywords": [],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Vencord/Companion"
-  },
-  "license": "GPL-3.0",
-  "author": "Vendicated <vendicated+npm@riseup.net>",
-  "main": "./dist/extension.js",
-  "scripts": {
-    "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --sourcemap --log-level=info --outfile=./dist/extension.js",
-    "lint": "eslint src --ext ts",
-    "vscode:prepublish": "pnpm compile --minify && pnpm lint",
-    "package": "vsce package --no-dependencies",
-    "watch": "pnpm compile --watch"
-  },
-  "activationEvents": [
-    "onLanguage:typescript",
-    "onLanguage:typescriptreact"
-  ],
-  "dependencies": {
-    "typescript": "^4.9.5",
-    "ws": "^8.12.1"
-  },
-  "devDependencies": {
-    "@types/node": "16.x",
-    "@types/vscode": "^1.76.0",
-    "@types/ws": "^8.5.4",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
-    "@vscode/vsce": "^2.18.0",
-    "eslint": "^8.34.0"
-  },
-  "engines": {
-    "vscode": "^1.76.0"
-  }
+    "name": "vencord-companion",
+    "displayName": "Vencord Development Helper",
+    "version": "0.0.1",
+    "description": "very cool",
+    "categories": [
+        "Other",
+        "Snippets",
+        "Testing"
+    ],
+    "keywords": [ ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Vencord/Companion"
+    },
+    "license": "GPL-3.0",
+    "author": "Vendicated <vendicated+npm@riseup.net>",
+    "main": "./dist/extension.js",
+    "scripts": {
+        "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --sourcemap --log-level=info --outfile=./dist/extension.js",
+        "lint": "eslint src --ext ts",
+        "vscode:prepublish": "pnpm compile --minify && pnpm lint",
+        "package": "vsce package --no-dependencies",
+        "watch": "pnpm compile --watch"
+    },
+    "activationEvents": [
+        "onLanguage:typescript",
+        "onLanguage:typescriptreact"
+    ],
+    "dependencies": {
+        "typescript": "^4.9.5",
+        "ws": "^8.12.1"
+    },
+    "devDependencies": {
+        "@types/node": "16.x",
+        "@types/vscode": "^1.76.0",
+        "@types/ws": "^8.5.4",
+        "@typescript-eslint/eslint-plugin": "^5.53.0",
+        "@typescript-eslint/parser": "^5.53.0",
+        "@vscode/vsce": "^2.18.0",
+        "eslint": "^8.34.0"
+    },
+    "engines": {
+        "vscode": "^1.76.0"
+    },
+
+    "contributes": {
+        "snippets": [
+            {
+                "language": "typescript",
+                "path": "./snippets/ts.json"
+            },
+            {
+                "language": "typescriptreact",
+                "path": "./snippets/ts.json"
+            },
+            {
+                "language": "typescriptreact",
+                "path": "./snippets/tsx.json"
+            }
+        ]
+    }
 }
