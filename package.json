@@ -27,6 +27,7 @@
         "lint": "eslint src --ext ts",
         "package": "vsce package --no-dependencies",
         "vscode:prepublish": "pnpm compile --minify && pnpm lint",
+        "publish": "vsce publish --no-dependencies",
         "watch": "pnpm compile --watch"
     },
     "contributes": {
