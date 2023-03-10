@@ -131,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
 					const range = new vscode.Range(document.positionAt(patch.pos), document.positionAt(patch.end));
 					const lens = new vscode.CodeLens(range, {
 						title: "Test Patch",
-						command: "vencord-development-helper.testPatch",
+						command: "vencord-companion.testPatch",
 						arguments: [data],
 						tooltip: "Test Patch",
 					});
@@ -146,7 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-	context.subscriptions.push(vscode.commands.registerCommand("vencord-development-helper.testPatch", (patch: {
+	context.subscriptions.push(vscode.commands.registerCommand("vencord-companion.testPatch", (patch: {
 		find: string;
 		replacement: Record<"match" | "replace", ParseResult>;
 	}) => {

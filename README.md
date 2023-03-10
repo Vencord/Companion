@@ -1,4 +1,4 @@
-# vencord-development-helper
+# vencord-companion
 
 Vencord Development Companion Extension that lets you test patches and webpack finds (TODO) from vscode
 
@@ -10,7 +10,7 @@ This is still a WIP and not usable rn
 
 ## TODO
 
-This is the README for your extension "vencord-development-helper". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "vencord-companion". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

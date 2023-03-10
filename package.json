@@ -1,5 +1,5 @@
 {
-  "name": "vencord-development-helper",
+  "name": "vencord-companion",
   "displayName": "Vencord Development Helper",
   "description": "very cool",
   "version": "0.0.1",
@@ -17,7 +17,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "vencord-development-helper.helloWorld",
+        "command": "vencord-companion.helloWorld",
         "title": "Hello World"
       }
     ]
