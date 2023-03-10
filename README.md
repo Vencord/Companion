@@ -6,4 +6,8 @@ Vencord VsCode Companion Extension that lets you test patches and webpack finds 
 
 ![image](https://user-images.githubusercontent.com/45497981/224377149-b1569eac-9411-4f55-849a-950ba5b06f37.png)
 
-![Video Demonstration](https://cdn.discordapp.com/attachments/1015060231060983891/1083891200135802940/2023-03-11_00-15-25.mp4)
+
+
+
+https://user-images.githubusercontent.com/45497981/224446924-6e272d78-2c30-41a2-a41e-f71286b5f220.mp4
+
