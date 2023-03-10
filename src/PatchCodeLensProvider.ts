@@ -101,7 +101,10 @@ function parsePatch(document: TextDocument, patch: ObjectLiteralExpression) {
 
 export const PatchCodeLensProvider: CodeLensProvider = {
     provideCodeLenses(document) {
-        const file = createSourceFile(document.fileName, document.getText(), ScriptTarget.Latest);
+        const text = document.getText();
+        if (!text.includes("definePlugin") || !text.includes("patches:")) return [];
+
+        const file = createSourceFile(document.fileName, text, ScriptTarget.Latest);
         const children = file.getChildAt(0).getChildren();
 
         for (const node of children) {
