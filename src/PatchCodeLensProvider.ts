@@ -1,6 +1,6 @@
 import { createSourceFile, Expression, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, ObjectLiteralExpression, ScriptTarget } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
-import { hasName, isNotNull, ParseResult, PatchData, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
+import { hasName, isNotNull, PatchData, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
 
 function parseFind(patch: ObjectLiteralExpression) {
     const find = patch.properties.find(p => hasName(p, "find"));
@@ -9,11 +9,11 @@ function parseFind(patch: ObjectLiteralExpression) {
     return find.initializer.text;
 }
 
-function parseMatch(node: Expression): ParseResult | null {
+function parseMatch(node: Expression) {
     return tryParseStringLiteral(node) ?? tryParseRegularExpressionLiteral(node);
 }
 
-function parseReplace(document: TextDocument, node: Expression): ParseResult | null {
+function parseReplace(document: TextDocument, node: Expression) {
     return tryParseStringLiteral(node) ?? tryParseFunction(document, node);
 }
 

@@ -6,26 +6,42 @@ export function hasName(node: ObjectLiteralElementLike, name: string) {
     return node.name && isIdentifier(node.name) && node.name.text === name;
 }
 
-export interface ParseResult {
-    type: string;
-    value: unknown;
+export interface StringNode {
+    type: "string";
+    value: string;
+}
+
+export interface RegexNode {
+    type: "regex";
+    value: {
+        pattern: string;
+        flags: string;
+    };
+}
+
+export interface FunctionNode {
+    type: "function";
+    value: string;
 }
 
 export interface PatchData {
     find: string;
-    replacement: Record<"match" | "replace", ParseResult>[];
+    replacement: {
+        match: StringNode | RegexNode;
+        replace: StringNode | FunctionNode;
+    }[];
 }
 
 export interface FindData {
     type: string;
-    args: string[];
+    args: Array<StringNode | FunctionNode>;
 }
 
 export function isNotNull<T>(value: T): value is Exclude<T, null | undefined> {
     return value != null;
 }
 
-export function tryParseFunction(document: TextDocument, node: Node) {
+export function tryParseFunction(document: TextDocument, node: Node): FunctionNode | null {
     if (!isArrowFunction(node) && !isFunctionExpression(node))
         return null;
 
@@ -49,7 +65,7 @@ export function tryParseFunction(document: TextDocument, node: Node) {
     };
 }
 
-export function tryParseStringLiteral(node: Node) {
+export function tryParseStringLiteral(node: Node): StringNode | null {
     if (!isStringLiteral(node)) return null;
 
     return {
@@ -58,7 +74,7 @@ export function tryParseStringLiteral(node: Node) {
     };
 }
 
-export function tryParseRegularExpressionLiteral(node: Node) {
+export function tryParseRegularExpressionLiteral(node: Node): RegexNode | null {
     if (!isRegularExpressionLiteral(node))
         return null;
 
