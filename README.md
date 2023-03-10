@@ -1,6 +1,6 @@
 # vencord-companion
 
-Vencord VsCode Companion Extension that lets you test patches and webpack finds from vscode
+Vencord Companion is a vscode extension to test Vencord patches & webpack finds right from the comfort of your IDE
 
 ![image](https://user-images.githubusercontent.com/45497981/224365555-60e968a1-d2d0-4aee-b29b-e5714273682c.png)
 

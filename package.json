@@ -1,27 +1,49 @@
 {
     "name": "vencord-companion",
-    "displayName": "Vencord Development Helper",
+    "displayName": "Vencord Companion",
     "version": "0.0.1",
-    "description": "very cool",
+    "description": "Vencord Companion is a vscode extension to test Vencord patches & webpack finds right from the comfort of your IDE",
     "categories": [
         "Other",
         "Snippets",
         "Testing"
     ],
-    "keywords": [ ],
+    "keywords": [
+        "Discord",
+        "Vencord",
+        "Modding",
+        "Typescript"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/Vencord/Companion"
     },
     "license": "GPL-3.0",
     "author": "Vendicated <vendicated+npm@riseup.net>",
+    "publisher": "Vendicated",
     "main": "./dist/extension.js",
     "scripts": {
         "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --sourcemap --log-level=info --outfile=./dist/extension.js",
         "lint": "eslint src --ext ts",
-        "vscode:prepublish": "pnpm compile --minify && pnpm lint",
         "package": "vsce package --no-dependencies",
+        "vscode:prepublish": "pnpm compile --minify && pnpm lint",
         "watch": "pnpm compile --watch"
+    },
+    "contributes": {
+        "snippets": [
+            {
+                "language": "typescript",
+                "path": "./snippets/ts.json"
+            },
+            {
+                "language": "typescriptreact",
+                "path": "./snippets/ts.json"
+            },
+            {
+                "language": "typescriptreact",
+                "path": "./snippets/tsx.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:typescript",
@@ -43,21 +65,15 @@
     "engines": {
         "vscode": "^1.76.0"
     },
-
-    "contributes": {
-        "snippets": [
-            {
-                "language": "typescript",
-                "path": "./snippets/ts.json"
-            },
-            {
-                "language": "typescriptreact",
-                "path": "./snippets/ts.json"
-            },
-            {
-                "language": "typescriptreact",
-                "path": "./snippets/tsx.json"
-            }
-        ]
+    "icon": "icon.png",
+    "galleryBanner": {
+        "color": "#ed80a7",
+        "theme": "dark"
+    },
+    "extensionKind": [
+        "ui"
+    ],
+    "sponsor": {
+        "url": "https://github.com/sponsors/Vendicated"
     }
 }
