@@ -8,3 +8,13 @@ export interface ParseResult {
     type: string;
     value: unknown;
 }
+
+export interface PatchData {
+    find: string;
+    replacement: Record<"match" | "replace", ParseResult>;
+}
+
+export interface FindData {
+    type: string;
+    args: string[];
+}

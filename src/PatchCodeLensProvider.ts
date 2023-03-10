@@ -1,7 +1,7 @@
 import { basename } from "path";
 import { CompilerOptions, createPrinter, createSourceFile, EmitHint, Expression, findConfigFile, isArrayLiteralExpression, isArrowFunction, isCallExpression, isExportAssignment, isFunctionExpression, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isRegularExpressionLiteral, isStringLiteral, ObjectLiteralExpression, parseJsonConfigFileContent, readConfigFile, ScriptTarget, sys, transpileModule } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
-import { hasName, ParseResult } from "./helpers";
+import { hasName, ParseResult, PatchData } from "./helpers";
 
 
 function parseFind(patch: ObjectLiteralExpression) {
@@ -87,7 +87,7 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
     };
 }
 
-function parsePatch(document: TextDocument, patch: ObjectLiteralExpression) {
+function parsePatch(document: TextDocument, patch: ObjectLiteralExpression): PatchData | null {
     const find = parseFind(patch);
     const replacement = parseReplacement(document, patch);
 
