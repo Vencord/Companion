@@ -27,7 +27,7 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
     const replacements = isArrayLiteralExpression(replacement) ? replacement.elements : [replacement];
     if (!replacements.every(isObjectLiteralExpression)) return null;
 
-    return (replacements as ObjectLiteralExpression[]).map((r: ObjectLiteralExpression) => {
+    const replacementValues = (replacements as ObjectLiteralExpression[]).map((r: ObjectLiteralExpression) => {
         const match = r.properties.find(p => hasName(p, "match"));
         const replace = r.properties.find(p => hasName(p, "replace"));
 
@@ -44,6 +44,8 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
             replace: replaceValue
         };
     }).filter(isNotNull);
+
+    return replacementValues.length > 0 ? replacementValues : null;
 }
 
 function parsePatch(document: TextDocument, patch: ObjectLiteralExpression): PatchData | null {
