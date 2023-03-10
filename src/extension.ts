@@ -8,7 +8,7 @@ export function activate(context: ExtensionContext) {
 	startWss();
 
 	context.subscriptions.push(
-		languages.registerCodeLensProvider({ pattern: "**/plugins/{*.ts,*.tsx,**/index.ts,**/index.tsx}" }, PatchCodeLensProvider),
+		languages.registerCodeLensProvider({ pattern: "**/{plugins,userplugins}/{*.ts,*.tsx,**/index.ts,**/index.tsx}" }, PatchCodeLensProvider),
 
 		languages.registerCodeLensProvider({ language: "typescript" }, WebpackCodeLensProvider),
 		languages.registerCodeLensProvider({ language: "typescriptreact" }, WebpackCodeLensProvider),
