@@ -19,7 +19,7 @@
     "lint": "eslint src --ext ts",
     "vscode:prepublish": "pnpm compile && pnpm lint",
     "package": "vsce package --no-dependencies",
-    "watch": "tsc -watch -p ./"
+    "watch": "pnpm compile --watch"
   },
   "activationEvents": [
     "onLanguage:typescript",

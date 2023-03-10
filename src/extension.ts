@@ -27,13 +27,12 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vencord-companion.testFind", async (find: FindData) => {
 			try {
 				await sendToSockets({ type: "testFind", data: find });
-				vscWindow.showInformationMessage("Patch OK!");
+				vscWindow.showInformationMessage("Find OK!");
 			} catch (err) {
-				vscWindow.showErrorMessage("Patch failed: ", {
+				vscWindow.showErrorMessage("Find bad: ", {
 					detail: String(err)
 				});
 			}
-			vscWindow.showInformationMessage("Test Find");
 		}),
 	);
 }
