@@ -11,10 +11,14 @@ export interface ParseResult {
 
 export interface PatchData {
     find: string;
-    replacement: Record<"match" | "replace", ParseResult>;
+    replacement: Record<"match" | "replace", ParseResult>[];
 }
 
 export interface FindData {
     type: string;
     args: string[];
+}
+
+export function isNotNull<T>(value: T): value is Exclude<T, null | undefined> {
+    return value != null;
 }

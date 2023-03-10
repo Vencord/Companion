@@ -3,7 +3,7 @@ import {
     CompilerOptions, createPrinter, createSourceFile, EmitHint, Expression, findConfigFile, isArrayLiteralExpression, isArrowFunction, isCallExpression, isExportAssignment, isFunctionExpression, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isRegularExpressionLiteral, isStringLiteral, ObjectLiteralExpression, parseJsonConfigFileContent, readConfigFile, ScriptTarget, sys, transpileModule
 } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
-import { hasName, ParseResult, PatchData } from "./helpers";
+import { hasName, isNotNull, ParseResult, PatchData } from "./helpers";
 
 
 function parseFind(patch: ObjectLiteralExpression) {
@@ -70,23 +70,27 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
     if (!replacementObj || !isPropertyAssignment(replacementObj)) return null;
 
     const replacement = replacementObj.initializer;
-    if (!isObjectLiteralExpression(replacement)) return null;
 
-    const match = replacement.properties.find(p => hasName(p, "match"));
-    const replace = replacement.properties.find(p => hasName(p, "replace"));
+    const replacements = isArrayLiteralExpression(replacement) ? replacement.elements : [replacement];
+    if (!replacements.every(isObjectLiteralExpression)) return null;
 
-    if (!match || !replace || !isPropertyAssignment(match) || !isPropertyAssignment(replace)) return null;
+    return (replacements as ObjectLiteralExpression[]).map((r: ObjectLiteralExpression) => {
+        const match = r.properties.find(p => hasName(p, "match"));
+        const replace = r.properties.find(p => hasName(p, "replace"));
 
-    const matchValue = parseMatch(match.initializer);
-    if (!matchValue) return null;
+        if (!match || !replace || !isPropertyAssignment(match) || !isPropertyAssignment(replace)) return null;
 
-    const replaceValue = parseReplace(document, replace.initializer);
-    if (!replaceValue) return null;
+        const matchValue = parseMatch(match.initializer);
+        if (!matchValue) return null;
 
-    return {
-        match: matchValue,
-        replace: replaceValue
-    };
+        const replaceValue = parseReplace(document, replace.initializer);
+        if (!replaceValue) return null;
+
+        return {
+            match: matchValue,
+            replace: replaceValue
+        };
+    }).filter(isNotNull);
 }
 
 function parsePatch(document: TextDocument, patch: ObjectLiteralExpression): PatchData | null {
