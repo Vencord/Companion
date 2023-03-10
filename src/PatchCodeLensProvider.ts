@@ -1,10 +1,6 @@
-import { basename } from "path";
-import {
-    CompilerOptions, createPrinter, createSourceFile, EmitHint, Expression, findConfigFile, isArrayLiteralExpression, isArrowFunction, isCallExpression, isExportAssignment, isFunctionExpression, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isRegularExpressionLiteral, isStringLiteral, ObjectLiteralExpression, parseJsonConfigFileContent, readConfigFile, ScriptTarget, sys, transpileModule
-} from "typescript";
+import { createSourceFile, Expression, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, ObjectLiteralExpression, ScriptTarget } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
-import { hasName, isNotNull, ParseResult, PatchData } from "./helpers";
-
+import { hasName, isNotNull, ParseResult, PatchData, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
 
 function parseFind(patch: ObjectLiteralExpression) {
     const find = patch.properties.find(p => hasName(p, "find"));
@@ -14,54 +10,11 @@ function parseFind(patch: ObjectLiteralExpression) {
 }
 
 function parseMatch(node: Expression): ParseResult | null {
-    if (isStringLiteral(node))
-        return {
-            type: "string",
-            value: node.text
-        };
-
-    if (isRegularExpressionLiteral(node)) {
-        const m = node.text.match(/^\/(.+?)\/(.*?)$/);
-        return m && {
-            type: "regex",
-            value: {
-                pattern: m[1],
-                flags: m[2]
-            }
-        };
-    }
-
-    return null;
+    return tryParseStringLiteral(node) ?? tryParseRegularExpressionLiteral(node);
 }
 
 function parseReplace(document: TextDocument, node: Expression): ParseResult | null {
-    if (isStringLiteral(node))
-        return {
-            type: "string",
-            value: node.text
-        };
-
-    if (isArrowFunction(node) || isFunctionExpression(node)) {
-        const code = createPrinter().printNode(EmitHint.Expression, node, node.getSourceFile());
-
-        let compilerOptions: CompilerOptions = {};
-
-        const tsConfigPath = findConfigFile(document.fileName, sys.fileExists);
-        if (tsConfigPath) {
-            const configFile = readConfigFile(tsConfigPath, sys.readFile);
-            compilerOptions = parseJsonConfigFileContent(configFile.config, sys, basename(tsConfigPath)).options;
-        }
-
-        const res = transpileModule(code, { compilerOptions });
-        if (res.diagnostics && res.diagnostics.length > 0) return null;
-
-        return {
-            type: "function",
-            value: res.outputText
-        };
-    }
-
-    return null;
+    return tryParseStringLiteral(node) ?? tryParseFunction(document, node);
 }
 
 function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression) {

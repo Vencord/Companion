@@ -32,10 +32,10 @@ export async function sendToSockets(data: { type: string, data: unknown; }) {
 
             cleanup();
 
-            if (parsed.message !== "OK") {
-                reject(parsed.message);
-            } else {
+            if (parsed.ok) {
                 resolve();
+            } else {
+                reject(parsed.error);
             }
         };
 

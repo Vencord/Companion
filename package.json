@@ -15,9 +15,9 @@
   "author": "Vendicated <vendicated+npm@riseup.net>",
   "main": "./dist/extension.js",
   "scripts": {
-    "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --minify --log-level=info --outfile=./dist/extension.js",
+    "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --sourcemap --log-level=info --outfile=./dist/extension.js",
     "lint": "eslint src --ext ts",
-    "vscode:prepublish": "pnpm compile && pnpm lint",
+    "vscode:prepublish": "pnpm compile --minify && pnpm lint",
     "package": "vsce package --no-dependencies",
     "watch": "pnpm compile --watch"
   },
