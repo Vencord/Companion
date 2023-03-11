@@ -1,40 +1,10 @@
 import { basename } from "path";
-import { CompilerOptions, createPrinter, EmitHint, findConfigFile, isArrowFunction, isFunctionExpression, isIdentifier, isRegularExpressionLiteral, isStringLiteral, Node, ObjectLiteralElementLike, parseJsonConfigFileContent, readConfigFile, sys, transpileModule } from "typescript";
+import { CompilerOptions, createPrinter, EmitHint, findConfigFile, isArrowFunction, isFunctionExpression, isIdentifier, isRegularExpressionLiteral, isStringLiteral, NamedDeclaration, Node, parseJsonConfigFileContent, readConfigFile, sys, transpileModule } from "typescript";
 import { TextDocument } from "vscode";
+import { FunctionNode, RegexNode, StringNode } from "./shared";
 
-export function hasName(node: ObjectLiteralElementLike, name: string) {
+export function hasName(node: NamedDeclaration, name: string) {
     return node.name && isIdentifier(node.name) && node.name.text === name;
-}
-
-export interface StringNode {
-    type: "string";
-    value: string;
-}
-
-export interface RegexNode {
-    type: "regex";
-    value: {
-        pattern: string;
-        flags: string;
-    };
-}
-
-export interface FunctionNode {
-    type: "function";
-    value: string;
-}
-
-export interface PatchData {
-    find: string;
-    replacement: {
-        match: StringNode | RegexNode;
-        replace: StringNode | FunctionNode;
-    }[];
-}
-
-export interface FindData {
-    type: string;
-    args: Array<StringNode | FunctionNode>;
 }
 
 export function isNotNull<T>(value: T): value is Exclude<T, null | undefined> {

@@ -1,8 +1,8 @@
 {
     "name": "vencord-companion",
     "displayName": "Vencord Companion",
-    "version": "0.0.2",
-    "description": "Vencord Companion is a vscode extension to test Vencord patches & webpack finds right from the comfort of your IDE",
+    "version": "0.1.1",
+    "description": "Vencord Companion is a vscode extension to test Vencord/Replugged patches & webpack finds right from the comfort of your IDE",
     "categories": [
         "Other",
         "Snippets",
@@ -24,11 +24,12 @@
     "main": "./dist/extension.js",
     "scripts": {
         "compile": "esbuild ./src/extension.ts --platform=node --external:vscode --bundle --sourcemap --log-level=info --outfile=./dist/extension.js",
-        "lint": "eslint src --ext ts",
+        "lint": "eslint src --ext ts && pnpm typecheck",
         "package": "vsce package --no-dependencies",
         "vscode:prepublish": "pnpm compile --minify && pnpm lint",
         "publish": "vsce publish --no-dependencies",
-        "watch": "pnpm compile --watch"
+        "watch": "pnpm compile --watch",
+        "typecheck": "tsc --noEmit"
     },
     "contributes": {
         "snippets": [
@@ -56,7 +57,7 @@
     },
     "devDependencies": {
         "@types/node": "16.x",
-        "@types/vscode": "^1.76.0",
+        "@types/vscode": "^1.70.0",
         "@types/ws": "^8.5.4",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
         "@typescript-eslint/parser": "^5.53.0",
@@ -64,7 +65,7 @@
         "eslint": "^8.34.0"
     },
     "engines": {
-        "vscode": "^1.76.0"
+        "vscode": "^1.70.0"
     },
     "icon": "icon.png",
     "galleryBanner": {

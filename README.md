@@ -1,11 +1,13 @@
 # vencord-companion
 
-Vencord Companion is a vscode extension to test Vencord patches & webpack finds right from the comfort of your IDE
+Vencord Companion is a vscode extension to test Vencord/Replugged patches & webpack finds right from the comfort of your IDE
 
 - Adds "Test Find" on any webpack finds that will test whether your filter finds exactly one module (and not more or none)
 - Adds "Test Patch" on any patches you define in definePlugin() that will test that your find is unique and your match and replace works and compiles correctly
 
-To use it you also need to compile Vencord with DEV (aka `pnpm build --watch` or `pnpm buildWeb --watch`) and enable the "DevCompanion" plugin. Then just start Discord after vscode (or right click the user settings cog and click "Reconnect Dev Companion"). Should also work with ArmCord and the Browser extensions!
+To use it you also need to:
+- `Vencord`: compile Vencord with DEV (aka `pnpm build --watch` or `pnpm buildWeb --watch`) and enable the  "DevCompanion" plugin. Then just start Discord after vscode (or right click the user settings cog and click "Reconnect Dev Companion"). Should also work with ArmCord and the Browser extensions!
+- `Replugged`: Use Alyxia's plugin
 
 [Download on the vscode marketplace](https://marketplace.visualstudio.com/items?itemName=Vendicated.vencord-companion)
 

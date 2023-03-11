@@ -1,6 +1,7 @@
-import { createSourceFile, Expression, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, ObjectLiteralExpression, ScriptTarget } from "typescript";
+import { ArrayLiteralExpression, createSourceFile, Expression, isArrayLiteralExpression, isAsExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, isVariableStatement, Node, ObjectLiteralExpression, ScriptTarget } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
-import { hasName, isNotNull, PatchData, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
+import { hasName, isNotNull, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
+import { Mod, PatchData, RegexNode, StringNode } from "./shared";
 
 function parseFind(patch: ObjectLiteralExpression) {
     const find = patch.properties.find(p => hasName(p, "find"));
@@ -17,8 +18,8 @@ function parseReplace(document: TextDocument, node: Expression) {
     return tryParseStringLiteral(node) ?? tryParseFunction(document, node);
 }
 
-function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression) {
-    const replacementObj = patch.properties.find(p => hasName(p, "replacement"));
+function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression, mod: Mod) {
+    const replacementObj = patch.properties.find(p => hasName(p, mod === Mod.VENCORD ? "replacement" : "replacements"));
 
     if (!replacementObj || !isPropertyAssignment(replacementObj)) return null;
 
@@ -31,13 +32,21 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
         const match = r.properties.find(p => hasName(p, "match"));
         const replace = r.properties.find(p => hasName(p, "replace"));
 
-        if (!match || !replace || !isPropertyAssignment(match) || !isPropertyAssignment(replace)) return null;
+        if (!replace || !isPropertyAssignment(replace)) return null;
 
-        const matchValue = parseMatch(match.initializer);
-        if (!matchValue) return null;
+        let matchValue: null | StringNode | RegexNode = null;
+
+        if (match) {
+            if (!isPropertyAssignment(match)) return null;
+
+            matchValue = parseMatch(match.initializer);
+            if (!matchValue) return null;
+        } else if (mod === Mod.VENCORD) {
+            return null;
+        }
 
         const replaceValue = parseReplace(document, replace.initializer);
-        if (!replaceValue) return null;
+        if (replaceValue == null) return null;
 
         return {
             match: matchValue,
@@ -48,11 +57,15 @@ function parseReplacement(document: TextDocument, patch: ObjectLiteralExpression
     return replacementValues.length > 0 ? replacementValues : null;
 }
 
-function parsePatch(document: TextDocument, patch: ObjectLiteralExpression): PatchData | null {
+function parsePatch(document: TextDocument, patch: ObjectLiteralExpression, mod: number): PatchData | null {
     const find = parseFind(patch);
-    const replacement = parseReplacement(document, patch);
+    const replacement = parseReplacement(document, patch, mod);
 
-    if (!find || !replacement) return null;
+    if (!replacement) return null;
+    if (!find) {
+        if (mod === Mod.VENCORD) return null;
+        if (replacement.some(r => !r.match)) return null;
+    }
 
     return {
         find,
@@ -60,34 +73,89 @@ function parsePatch(document: TextDocument, patch: ObjectLiteralExpression): Pat
     };
 }
 
-export const PatchCodeLensProvider: CodeLensProvider = {
-    provideCodeLenses(document) {
+const enum ParseResult {
+    NOT_FOUND,
+    INVALID
+}
+
+function parsePossiblePatchesReplugged(node: Node): ArrayLiteralExpression | ParseResult {
+    if (isExportAssignment(node)) {
+        const exportObj = isAsExpression(node.expression) ? node.expression.expression : node.expression;
+        if (isArrayLiteralExpression(exportObj)) return exportObj;
+
+        if (isIdentifier(exportObj)) return ParseResult.NOT_FOUND;
+
+        return ParseResult.INVALID;
+    }
+
+    if (isVariableStatement(node)) {
+        const decl = node.declarationList.declarations[0];
+        if (!decl.initializer || !hasName(decl, "patches")) return ParseResult.NOT_FOUND;
+
+        return isArrayLiteralExpression(decl.initializer)
+            ? decl.initializer
+            : ParseResult.INVALID;
+    }
+
+    return ParseResult.NOT_FOUND;
+}
+
+function parsePossiblePatchesVencord(node: Node): ArrayLiteralExpression | ParseResult {
+    if (!isExportAssignment(node) || !isCallExpression(node.expression)) return ParseResult.NOT_FOUND;
+
+    const callExpr = node.expression;
+    if (!isIdentifier(callExpr.expression) || callExpr.expression.text !== "definePlugin") return ParseResult.NOT_FOUND;
+
+    const pluginObj = node.expression.arguments[0];
+    if (!isObjectLiteralExpression(pluginObj)) return ParseResult.INVALID;
+
+    const patchesObj = pluginObj.properties.find(p => hasName(p, "patches"));
+    if (!patchesObj) return ParseResult.INVALID;
+
+    const patchesArray = isPropertyAssignment(patchesObj) ? patchesObj.initializer : patchesObj;
+
+    return isArrayLiteralExpression(patchesArray) ? patchesArray : ParseResult.INVALID;
+}
+
+export class PatchCodeLensProvider implements CodeLensProvider {
+    public constructor(public readonly mod: Mod) { }
+
+    parsePatches(node: Node) {
+        switch (this.mod) {
+            case Mod.VENCORD:
+                return parsePossiblePatchesVencord(node);
+            case Mod.REPLUGGED:
+                return parsePossiblePatchesReplugged(node);
+        }
+    }
+
+    check(text: string) {
+        switch (this.mod) {
+            case Mod.VENCORD:
+                return text.includes("definePlugin") && text.includes("patches:");
+            case Mod.REPLUGGED:
+                return text.includes("export default") && text.includes("replacements:") && text.includes("match:") && text.includes("replace:");
+        }
+    }
+
+    provideCodeLenses(document: TextDocument) {
         const text = document.getText();
-        if (!text.includes("definePlugin") || !text.includes("patches:")) return [];
+
+        if (!this.check(text)) return [];
 
         const file = createSourceFile(document.fileName, text, ScriptTarget.Latest);
         const children = file.getChildAt(0).getChildren();
 
         for (const node of children) {
-            if (!isExportAssignment(node) || !isCallExpression(node.expression)) continue;
-
-            const callExpr = node.expression;
-            if (!isIdentifier(callExpr.expression) || callExpr.expression.text !== "definePlugin") continue;
-
-            const pluginObj = node.expression.arguments[0];
-            if (!isObjectLiteralExpression(pluginObj)) return [];
-
-            const patchesObj = pluginObj.properties.find(p => hasName(p, "patches"));
-            if (!patchesObj) return [];
-
-            const patchesArray = isPropertyAssignment(patchesObj) ? patchesObj.initializer : patchesObj;
-            if (!isArrayLiteralExpression(patchesArray)) return [];
+            const patchesArray = this.parsePatches(node);
+            if (patchesArray === ParseResult.NOT_FOUND) continue;
+            if (patchesArray === ParseResult.INVALID) return [];
 
             const lenses = [] as CodeLens[];
             for (const patch of patchesArray.elements) {
                 if (!isObjectLiteralExpression(patch)) continue;
 
-                const data = parsePatch(document, patch);
+                const data = parsePatch(document, patch, this.mod);
                 if (!data) continue;
 
                 const range = new Range(document.positionAt(patch.properties.pos), document.positionAt(patch.properties.end));
@@ -104,4 +172,4 @@ export const PatchCodeLensProvider: CodeLensProvider = {
 
         return [];
     }
-};
+}

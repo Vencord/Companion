@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': 16.x
-  '@types/vscode': ^1.76.0
+  '@types/vscode': ^1.70.0
   '@types/ws': ^8.5.4
   '@typescript-eslint/eslint-plugin': ^5.53.0
   '@typescript-eslint/parser': ^5.53.0
