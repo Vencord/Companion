@@ -13,7 +13,7 @@ let nonceCounter = 8485;
 
 export async function sendToSockets(data: { type: string, data: unknown; }) {
     if (sockets.size === 0) {
-        throw new Error("No Discord Clients Connected! Make sure you have Discord opened and be using a DEV build of Vencord");
+        throw new Error("No Discord Clients Connected! Make sure you have Discord open, and have the DevCompanion plugin enabled (see README for more info!)");
     }
 
     const nonce = nonceCounter++;
