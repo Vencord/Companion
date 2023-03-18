@@ -32,7 +32,7 @@ export const WebpackCodeLensProvider: CodeLensProvider = {
             if (isCallExpression(node) && finds.includes(type = node.expression.getText())) {
                 const args = node.arguments.map(a => tryParseStringLiteral(a) ?? tryParseRegularExpressionLiteral(a) ?? tryParseFunction(document, a));
 
-                const range = new Range(document.positionAt(node.pos), document.positionAt(node.end));
+                const range = new Range(document.positionAt(node.getStart()), document.positionAt(node.getEnd()));
                 lenses.push(new CodeLens(range, {
                     title: "Test Find",
                     command: "vencord-companion.testFind",
