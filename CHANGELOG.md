@@ -12,3 +12,7 @@
 
 - Add replugged support
 - Lower required vscode version to 70 for time being
+
+# 0.1.2
+
+- Fix codelens position for webpack finds
