@@ -119,7 +119,8 @@ const recursivelyFindType = (node: TypeReferenceNode | IntersectionTypeNode, typ
         if (isTypeReferenceNode(type) && isIdentifier(type.typeName) && type.typeName.text === typeName) {
             return type;
         } else if (isIntersectionTypeNode(type)) {
-            return recursivelyFindType(type, typeName);
+            const t = recursivelyFindType(type, typeName);
+            if (t) return t;
         }
     }
 }
