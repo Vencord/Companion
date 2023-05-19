@@ -63,6 +63,7 @@
         "@typescript-eslint/eslint-plugin": "^5.53.0",
         "@typescript-eslint/parser": "^5.53.0",
         "@vscode/vsce": "^2.18.0",
+        "esbuild": "^0.17.19",
         "eslint": "^8.34.0"
     },
     "engines": {
