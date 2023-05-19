@@ -1,7 +1,7 @@
 {
     "name": "vencord-companion",
     "displayName": "Vencord Companion",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "Vencord Companion is a vscode extension to test Vencord/Replugged patches & webpack finds right from the comfort of your IDE",
     "categories": [
         "Other",

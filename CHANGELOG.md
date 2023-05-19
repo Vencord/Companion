@@ -16,3 +16,7 @@
 # 0.1.2
 
 - Fix codelens position for webpack finds
+
+# 0.1.3
+
+- Now also supports plugin definitions stored in variables, like `const p: PluginDef = { ... }`
