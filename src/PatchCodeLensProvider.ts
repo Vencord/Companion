@@ -1,12 +1,7 @@
-import { ArrayLiteralExpression, createSourceFile, Expression, IntersectionTypeNode, isArrayLiteralExpression, isAsExpression, isCallExpression, isExportAssignment, isIdentifier, isIntersectionTypeNode, isObjectLiteralExpression, isOptionalTypeNode, isPropertyAssignment, isStringLiteral, isTypeElement, isTypeNode, isTypeReferenceNode, isVariableDeclaration, isVariableStatement, Node, NodeFlags, ObjectLiteralExpression, ScriptTarget, SyntaxKind, TypeLiteralNode, TypeReferenceNode } from "typescript";
+import { ArrayLiteralExpression, createSourceFile, Expression, IntersectionTypeNode, isArrayLiteralExpression, isAsExpression, isCallExpression, isExportAssignment, isIdentifier, isIntersectionTypeNode, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, isTypeReferenceNode, isVariableDeclaration, isVariableStatement, Node, ObjectLiteralExpression, ScriptTarget, TypeReferenceNode } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
 import { hasName, isNotNull, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
 import { Mod, PatchData, RegexNode, StringNode } from "./shared";
-import { isExpressionStatement } from "typescript";
-import { isExpressionWithTypeArguments } from "typescript";
-import { isLiteralExpression } from "typescript";
-import { isIdentifierPart } from "typescript";
-import { isBlock } from "typescript";
 
 function parseFind(patch: ObjectLiteralExpression) {
     const find = patch.properties.find(p => hasName(p, "find"));
