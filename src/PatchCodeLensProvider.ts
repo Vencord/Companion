@@ -1,4 +1,4 @@
-import { ArrayLiteralExpression, createSourceFile, Expression, isArrayLiteralExpression, isAsExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, isVariableStatement, Node, ObjectLiteralExpression, ScriptTarget } from "typescript";
+import { ArrayLiteralExpression, createSourceFile, Expression, IntersectionTypeNode, isArrayLiteralExpression, isAsExpression, isCallExpression, isExportAssignment, isIdentifier, isIntersectionTypeNode, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, isTypeReferenceNode, isVariableDeclaration, isVariableStatement, Node, ObjectLiteralExpression, ScriptTarget, TypeReferenceNode } from "typescript";
 import { CodeLens, CodeLensProvider, Range, TextDocument } from "vscode";
 import { hasName, isNotNull, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
 import { Mod, PatchData, RegexNode, StringNode } from "./shared";
@@ -100,13 +100,58 @@ function parsePossiblePatchesReplugged(node: Node): ArrayLiteralExpression | Par
     return ParseResult.NOT_FOUND;
 }
 
+
+const recursivelyFindType = (node: TypeReferenceNode | IntersectionTypeNode, typeName: string): TypeReferenceNode | undefined => {
+    if (!isIntersectionTypeNode(node) && isTypeReferenceNode(node)) {
+        if (isIdentifier(node.typeName) && node.typeName.text === typeName) return node;
+        else return;
+    }
+    
+    for (const type of node.types) {
+        if (isTypeReferenceNode(type) && type.typeArguments) {
+            for (const typeArg of type.typeArguments) {
+                if (isTypeReferenceNode(typeArg) || isIntersectionTypeNode(typeArg)) {
+                    const result = recursivelyFindType(typeArg, typeName);
+                    if (result) return result;
+                }
+            }
+        }
+        if (isTypeReferenceNode(type) && isIdentifier(type.typeName) && type.typeName.text === typeName) {
+            return type;
+        } else if (isIntersectionTypeNode(type)) {
+            const t = recursivelyFindType(type, typeName);
+            if (t) return t;
+        }
+    }
+}
+
+
 function parsePossiblePatchesVencord(node: Node): ArrayLiteralExpression | ParseResult {
-    if (!isExportAssignment(node) || !isCallExpression(node.expression)) return ParseResult.NOT_FOUND;
+    let pluginObj: Expression | undefined = undefined;
 
-    const callExpr = node.expression;
-    if (!isIdentifier(callExpr.expression) || callExpr.expression.text !== "definePlugin") return ParseResult.NOT_FOUND;
+    if (isVariableStatement(node)) {
+        for (const decl of node.declarationList.declarations) {
+            if (isVariableDeclaration(decl) && decl.type && decl.initializer && isObjectLiteralExpression(decl.initializer)) {
+                if (isTypeReferenceNode(decl.type) || isIntersectionTypeNode(decl.type)) {
+                    const type = recursivelyFindType(decl.type, "PluginDef");
+                    if (type) {
+                        pluginObj = decl.initializer;
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
-    const pluginObj = node.expression.arguments[0];
+    if (!pluginObj) {
+        if (!isExportAssignment(node) || !isCallExpression(node.expression)) return ParseResult.NOT_FOUND;
+
+        const callExpr = node.expression;
+        if (!isIdentifier(callExpr.expression) || callExpr.expression.text !== "definePlugin") return ParseResult.NOT_FOUND;
+    
+        pluginObj = node.expression.arguments[0];
+    }
+
     if (!isObjectLiteralExpression(pluginObj)) return ParseResult.INVALID;
 
     const patchesObj = pluginObj.properties.find(p => hasName(p, "patches"));
