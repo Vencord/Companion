@@ -48,7 +48,7 @@ export function tryParseRegularExpressionLiteral(node: Node): RegexNode | null {
     if (!isRegularExpressionLiteral(node))
         return null;
 
-    const m = node.text.match(/^\/(.+?)\/(.*?)$/);
+    const m = node.text.match(/^\/(.+)\/(.*?)$/);
     return m && {
         type: "regex",
         value: {
