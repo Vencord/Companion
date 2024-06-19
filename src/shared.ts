@@ -32,8 +32,3 @@ export interface FindData {
     type: string;
     args: Array<StringNode | FunctionNode>;
 }
-
-export const enum Mod {
-    VENCORD,
-    REPLUGGED
-}

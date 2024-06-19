@@ -1,6 +1,6 @@
 import { commands, ExtensionContext, languages, window as vscWindow } from "vscode";
 import { PatchCodeLensProvider } from "./PatchCodeLensProvider";
-import { FindData, Mod, PatchData } from "./shared";
+import { FindData, PatchData } from "./shared";
 import { WebpackCodeLensProvider } from "./WebpackCodeLensProvider";
 import { sendToSockets, startWss } from "./wss";
 
@@ -10,11 +10,7 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		languages.registerCodeLensProvider(
 			{ pattern: "**/{plugins,userplugins}/{*.ts,*.tsx,**/index.ts,**/index.tsx}" },
-			new PatchCodeLensProvider(Mod.VENCORD)
-		),
-		languages.registerCodeLensProvider(
-			{ pattern: "**/plaintextPatches.{ts,tsx,js,jsx}" },
-			new PatchCodeLensProvider(Mod.REPLUGGED)
+			new PatchCodeLensProvider()
 		),
 
 		languages.registerCodeLensProvider({ language: "typescript" }, WebpackCodeLensProvider),

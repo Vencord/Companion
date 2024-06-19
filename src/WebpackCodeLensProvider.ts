@@ -2,25 +2,18 @@ import { createSourceFile, isCallExpression, Node, ScriptTarget } from "typescri
 import { CodeLens, CodeLensProvider, Range } from "vscode";
 import { isNotNull, tryParseFunction, tryParseRegularExpressionLiteral, tryParseStringLiteral } from "./helpers";
 
-const vencordImportRe = /import \{(.+?)\} from ['`"]@webpack(\/.+?)?['`"]/;
-const repluggedImportRe = /(?:import \{[^}]*webpack[^}]*\} from ['"`]replugged["'`])|(import \{[^}]+\} from "\.[^"]*?modules\/webpack")/;
+const vencordWebpackImportRegex = /import \{(.+?)\} from ['`"]@webpack(\/.+?)?['`"]/;
 
 export const WebpackCodeLensProvider: CodeLensProvider = {
     provideCodeLenses(document) {
         const text = document.getText();
 
-        let finds: string[];
+        const match = vencordWebpackImportRegex.exec(text);
+        if (!match) return [];
 
-        const match = vencordImportRe.exec(text);
-        if (match) {
-            finds = match[1].split(",")
-                .map(s => s.trim())
-                .filter(s => s.startsWith("find"));
-        } else if (repluggedImportRe.test(text)) {
-            finds = ["getModule", "getByProps", "getByValue", "getBySource"];
-        } else {
-            return [];
-        }
+        const finds = match[1].split(",")
+            .map(s => s.trim())
+            .filter(s => s.startsWith("find"));
 
         if (!finds.length) return [];
 
