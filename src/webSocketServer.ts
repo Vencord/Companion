@@ -1,7 +1,7 @@
 import { RawData, WebSocket, WebSocketServer } from "ws";
 import { outputChannel } from "./shared";
 
-export let wss: WebSocketServer;
+export let wss: WebSocketServer | undefined;
 
 export const sockets = new Set<WebSocket>();
 
@@ -64,7 +64,7 @@ export async function sendToSockets(data: { type: string, data: unknown; }) {
     return true;
 }
 
-export function startWss() {
+export function startWebSocketServer() {
     wss = new WebSocketServer({
         port: 8485
     });
@@ -126,4 +126,9 @@ export function startWss() {
     wss.on("close", () => {
         outputChannel.appendLine("[WS] Closed");
     });
+}
+
+export function stopWebSocketServer() {
+    wss?.close();
+    wss = undefined;
 }

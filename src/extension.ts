@@ -2,14 +2,14 @@ import { commands, ExtensionContext, languages, window as vscWindow } from "vsco
 import { PatchCodeLensProvider } from "./PatchCodeLensProvider";
 import { FindData, PatchData } from "./shared";
 import { WebpackCodeLensProvider } from "./WebpackCodeLensProvider";
-import { sendToSockets, startWss } from "./wss";
+import { sendToSockets, startWebSocketServer, stopWebSocketServer } from "./webSocketServer";
 
 export function activate(context: ExtensionContext) {
-	startWss();
+	startWebSocketServer();
 
 	context.subscriptions.push(
 		languages.registerCodeLensProvider(
-			{ pattern: "**/{plugins,userplugins}/{*.ts,*.tsx,**/index.ts,**/index.tsx}" },
+			{ pattern: "**/{plugins,userplugins,plugins/_*}/{*.ts,*.tsx,**/index.ts,**/index.tsx}" },
 			new PatchCodeLensProvider()
 		),
 
@@ -37,5 +37,5 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate() {
-	//
+	stopWebSocketServer();
 }
