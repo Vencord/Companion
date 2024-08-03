@@ -12,5 +12,32 @@
             "    authors: [Devs.${3:author}],",
             "});"
         ]
+    },
+    "Define Plugin with Settings": {
+        "prefix": [
+            "defPluginWithSettings",
+            "vcPluginWithSettings"
+        ],
+        "description": "Defines a Vencord Plugin with Settings",
+        "body": [
+            "import { definePluginSettings } from \"@api/Settings\";",
+            "import { Devs } from \"@utils/constants\";",
+            "import definePlugin, { OptionType } from \"@utils/types\";",
+            "",
+            "const settings = definePluginSettings({",
+            "    ${4:settingName}: {",
+            "        description: \"${5:description}\",",
+            "        type: OptionType.${6:BOOLEAN},",
+            "        default: ${7:true},",
+            "    }",
+            "});",
+            "",
+            "export default definePlugin({",
+            "    name: \"${1:name}\",",
+            "    description: \"${2:description}\",",
+            "    authors: [Devs.${3:author}],",
+            "    settings,",
+            "});"
+        ]
     }
 }
